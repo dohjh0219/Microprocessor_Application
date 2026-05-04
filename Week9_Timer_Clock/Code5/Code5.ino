@@ -6,23 +6,23 @@
 #define clear_bit(value, bit) (_SFR_BYTE(value) &= ~_BV(bit))
 
 int main(void) {
-    set_bit(DDRB, 7);          // LED 연결 핀을 출력으로 설정
-    clear_bit(PORTB, 7);       // LED는 꺼진 상태로 시작
+    set_bit(DDRB, 7);
+    clear_bit(PORTB, 7);
 
-    uint8_t state = 0;         // LED 상태
+    uint8_t state = 0;
 
-    millis2560_init();         // 타이머/카운터 0번 초기화
+    millis2560_init();
 
     unsigned long time_previous, time_current;
-    time_previous = millis2560();   // 시작 시간
+    time_previous = millis2560();
 
     while (1) {
-        time_current = millis2560();   // 현재 시간
+        time_current = millis2560();
 
-        if ((time_current - time_previous) > 1000) {   // 1초 경과
+        if ((time_current - time_previous) > 1000) {
             time_previous = time_current;
 
-            state = !state;            // LED 상태 반전
+            state = !state;
 
             if (state)
                 set_bit(PORTB, 7);

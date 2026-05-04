@@ -21,9 +21,7 @@ ISR(TIMER0_OVF_vect) {
 }
 
 void millis2560_init(void) {
-    // 분주비 64 설정 [cite: 464]
     TCCR0B |= (1 << CS01) | (1 << CS00); 
-    // 오버플로 인터럽트 허용 [cite: 465]
     TIMSK0 |= (1 << TOIE0); 
     sei(); 
 }

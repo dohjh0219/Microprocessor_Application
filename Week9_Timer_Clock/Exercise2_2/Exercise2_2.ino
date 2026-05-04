@@ -9,7 +9,6 @@ volatile int count = 0;
 uint8_t state = 0;
 
 ISR(TIMER0_COMPA_vect) {
-    // TCNT0 = 0; 구문 생략 (CTC 모드라 자동 초기화 됨) 
     count++;
     
     if (count == 64) {
@@ -31,13 +30,11 @@ int main(void) {
     TIMSK0 |= (1 << OCIE0A); 
     OCR0A = 128; 
 
-    TCCR0A |= (1 << COM0A0); // PB7 하드웨어 자동 반전 유지 [cite: 407]
-    TCCR0A |= (1 << WGM01);  // CTC 모드 활성화 
+    TCCR0A |= (1 << COM0A0);
+    TCCR0A |= (1 << WGM01);
 
     sei(); 
 
-    while (1) {
-        // 메인 루프는 비워둠
-    }
+    while (1) {     }
     return 0;
 }
