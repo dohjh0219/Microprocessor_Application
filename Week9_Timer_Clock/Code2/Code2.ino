@@ -2,28 +2,36 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#define set_bit(value, bit)   ( _SFR_BYTE(value) |= _BV(bit) )
+#define set_bit(value, bit) ( _SFR_BYTE(value) |= _BV(bit) )
 #define clear_bit(value, bit) ( _SFR_BYTE(value) &= ~_BV(bit) )
 
+volatile int count = 0; 
+uint8_t state = 0;
+
 ISR(TIMER0_COMPA_vect) {
-    TCNT0 = 0;   // 카운터 값 초기화
+  count++;
+  TCNT0 = 0;
 }
 
 int main(void) {
-    set_bit(DDRB, 7);      // PB7 핀을 출력으로 설정
-    clear_bit(PORTB, 7);   // LED는 끈 상태에서 시작
+  set_bit(DDRB, 7); 
+  clear_bit(PORTB, 7); 
 
-    TCCR0B |= (1 << CS02) | (1 << CS00);   // 분주비를 1024로 설정
-    TIMSK0 |= (1 << OCIE0A);               // 비교일치 인터럽트 A 허용
-    OCR0A = 255;                           // 비교일치 기준값
+  TCCR0B |= (1 << CS02) | (1 << CS00);
 
-    // 비교일치 인터럽트 발생 시 OC0A 핀의 출력을 반전
-    TCCR0A |= (1 << COM0A0);
+  TIMSK0 |= (1 << OCIE0A);
+  OCR0A = 128;
 
-    sei();   // 전역적으로 인터럽트 허용
+  sei();
 
-    while (1) {
+  while (1) {
+    if (count == 64) {
+      count = 0;
+      state = !state;
+      if (state) set_bit(PORTB, 7); 
+      else clear_bit(PORTB, 7);
     }
+  }
 
-    return 0;
+  return 0;
 }
