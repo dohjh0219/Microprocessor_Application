@@ -21,7 +21,6 @@ int main(void) {
     while (1) {
         current_time = millis2560();
 
-        // PE4 제어 (0.5초 간격) 
         if ((current_time - prev_pe4) >= 500) {
             prev_pe4 = current_time;
             state_pe4 = !state_pe4;
@@ -29,7 +28,6 @@ int main(void) {
             else clear_bit(PORTE, 4);
         }
 
-        // PE5 제어 (1.0초 간격) [cite: 609]
         if ((current_time - prev_pe5) >= 1000) {
             prev_pe5 = current_time;
             state_pe5 = !state_pe5;
