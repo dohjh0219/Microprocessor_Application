@@ -6,7 +6,7 @@
 
 int main(void) {
   UART0_init();
-  ADC_init(1);
+  ADC_init(1, SINGLE_CONVERSION);
 
   int read, temperature;
   float input_voltage;
@@ -18,6 +18,7 @@ int main(void) {
 
     temperature = (int)(input_voltage * 100.0);
 
+    // UART0_print(input_voltage);
     UART0_print(temperature);
     UART0_write('\n');
 

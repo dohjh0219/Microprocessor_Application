@@ -6,7 +6,7 @@
 
 int main(void) {
   UART0_init();
-  ADC_init(2);
+  ADC_init(2, SINGLE_CONVERSION);
 
   int read;
 

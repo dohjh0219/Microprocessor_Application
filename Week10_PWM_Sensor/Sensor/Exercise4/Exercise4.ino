@@ -7,11 +7,11 @@
 #define set_bit(value, bit) ( _SFR_BYTE(value) |= _BV(bit) )
 #define clear_bit(value, bit) ( _SFR_BYTE(value) &= ~_BV(bit) )
 
-#define THRESHOLD 100
+#define THRESHOLD 30
 
 int main(void) {
   UART0_init();
-  ADC_init(2);
+  ADC_init(2, SINGLE_CONVERSION);
 
   set_bit(DDRB, 7);
   clear_bit(PORTB, 7);

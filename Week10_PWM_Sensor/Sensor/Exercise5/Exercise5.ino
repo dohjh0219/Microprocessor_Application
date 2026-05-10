@@ -2,21 +2,22 @@
 #include <avr/io.h>
 #include "ADC.h"
 #include "millis2560.h"
+#include "UART0.h"
 
 #define set_bit(value, bit) ( _SFR_BYTE(value) |= _BV(bit) )
 #define clear_bit(value, bit) ( _SFR_BYTE(value) &= ~_BV(bit) )
 
 #define READ_INTERVAL  200
 
-#define THRESH_3LED   256
-#define THRESH_2LED   512
-#define THRESH_1LED   768
+#define THRESH_3LED   40
+#define THRESH_2LED   50
+#define THRESH_1LED   60
 
 static uint8_t get_led_count(int adc) {
-    if (adc < THRESH_3LED) return 4;
-    if (adc < THRESH_2LED) return 3;
-    if (adc < THRESH_1LED) return 2;
-    return 1;
+    if (adc < THRESH_3LED) return 1;
+    if (adc < THRESH_2LED) return 2;
+    if (adc < THRESH_1LED) return 3;
+    return 4;
 }
 
 static void set_leds(uint8_t count) {
@@ -30,6 +31,8 @@ static void set_leds(uint8_t count) {
 }
 
 int main(void) {
+    UART0_init();
+
     ADC_init(2, SINGLE_CONVERSION);
     millis2560_init();
 
@@ -48,6 +51,9 @@ int main(void) {
             last_read = now;
 
             int adc = read_ADC();
+            UART0_print(adc);
+            UART0_print("\n");
+
             set_leds(get_led_count(adc));
         }
     }
