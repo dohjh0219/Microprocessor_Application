@@ -7,13 +7,13 @@
 #define set_bit(value, bit) ( _SFR_BYTE(value) |= _BV(bit) )
 #define clear_bit(value, bit) ( _SFR_BYTE(value) &= ~_BV(bit) )
 
-#define THRESHOLD 42
+#define THRESHOLD 28
 #define SENSOR_INTERVAL  1000
 #define BLINK_INTERVAL    500
 
 int main(void) {
     UART0_init();
-    ADC_init(1, SINGLE_CONVERSION);
+    ADC_init(1);
     millis2560_init();
 
     set_bit(DDRB, 7);
