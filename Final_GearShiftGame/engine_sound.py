@@ -20,7 +20,7 @@ import serial
 import serial.tools.list_ports
 
 # ── 설정 ─────────────────────────────────────────────────────
-PORT  = '/dev/cu.usbmodem11401'   # None 이면 자동 탐색
+PORT  = '/dev/cu.usbmodem1301'   # None 이면 자동 탐색
 BAUD  = 9600
 FS    = 44100    # 샘플링 주파수 (Hz)
 CHUNK = 1024     # 오디오 버퍼 (~23 ms/callback)
