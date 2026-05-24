@@ -185,11 +185,13 @@ static void servo2_init(void) {
     TCCR4B |= (1 << CS41);
 }
 
+#define SERVO2_OFFSET  300U   /* 속도계 영점 보정 – 뒤쳐짐 심하면 올리기, 앞서면 내리기 */
+
 static void servo2_update(float speed) {
     if (speed < 0.0f)       speed = 0.0f;
     if (speed > MAX_SPD[6]) speed = MAX_SPD[6];
     float r = speed / MAX_SPD[6];
-    OCR4B = (uint16_t)(SERVO_MIN + r * (SERVO_MAX - SERVO_MIN));
+    OCR4B = (uint16_t)(SERVO_MIN + r * (SERVO_MAX - SERVO_MIN)) + SERVO2_OFFSET;
 }
 
 /* ================================================================
@@ -390,24 +392,26 @@ static void scr_result(void) {
     if (c2 < 10) LCD_write_data('0'); LCD_uint(c2, 2);
 }
 
-/* Row0: "P? SSSkmh G:G C"   Row1: "RRRm RPM:PPPP " */
 static void scr_play(CarState *c, uint8_t p) {
+    /* Row0: 진행 로딩바  "################" */
     LCD_goto_XY(0, 0);
-    LCD_write_data('P'); LCD_write_data('1' + p); LCD_write_data(' ');
-    LCD_uint((uint32_t)c->speed, 3);
-    LCD_puts("kmh G:");
-    int8_t dg = c->clutch_in ? c->next_gear : c->gear;
-    LCD_write_data(dg > 0 ? ('0' + (uint8_t)dg) : 'N');
-    LCD_write_data(' ');
-    LCD_write_data(c->clutch_in ? 'C' : ' ');
+    float progress = c->dist / TOTAL_DIST_M;
+    if (progress > 1.0f) progress = 1.0f;
+    uint8_t filled = (uint8_t)(progress * 16.0f);
+    for (uint8_t i = 0; i < 16; i++)
+        LCD_write_data(i < filled ? '#' : '-');
 
+    /* Row1: "P1 200m G:3     " */
     LCD_goto_XY(1, 0);
+    LCD_write_data('P'); LCD_write_data('1' + p); LCD_write_data(' ');
     float remain = TOTAL_DIST_M - c->dist;
     if (remain < 0.0f) remain = 0.0f;
     LCD_uint((uint32_t)remain, 3);
-    LCD_puts("m RPM:");
-    LCD_uint((uint32_t)c->rpm, 4);
-    LCD_write_data(' ');
+    LCD_write_data('m'); LCD_write_data(' ');
+    LCD_puts("G:");
+    int8_t dg = c->clutch_in ? c->next_gear : c->gear;
+    LCD_write_data(dg > 0 ? ('0' + (uint8_t)dg) : 'N');
+    LCD_puts("     ");
 }
 
 /* ================================================================
